@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <script src="/dist/main.bundle.js"></script>
+    <style>
+      html {
+        background: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cvs" width="400" height="240"></canvas>
+    <script>
+      (async () => {
+        const myImage = new RIMG(cvs);
+
+
+        for(let i = 0 ; i < myImage.imageData.length ; i+=4) {
+          myImage.imageData[i+0] = 255;
+          myImage.imageData[i+1] =   0;
+          myImage.imageData[i+2] = 255;
+          myImage.imageData[i+3] = 255;
+        }
+
+        myImage.drawPolygon([
+          [
+            [200,100],
+            [300,170],
+            [100,220],
+          ]
+        ], {
+          fill: '#00FF00',
+        })
+
+        cvs.getContext('2d').putImageData(myImage.toImageData(), 0, 0);
+      })();
+    </script>
+  </body>
+</html>
