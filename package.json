@@ -1,6 +1,6 @@
 {
   "name": "@finwo/rimg",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Raw image manipulation library",
   "main": "dist/main.js",
   "browser": "dist/main.bundle.js",
