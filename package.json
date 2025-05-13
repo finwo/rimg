@@ -14,6 +14,10 @@
   "author": "Yersa Nordman <finwo@pm.me>",
   "license": "MIT-0",
   "funding": "https://github.com/sponsors/finwo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/finwo/rimg"
+  },
   "files": [
     "dist/"
   ],
