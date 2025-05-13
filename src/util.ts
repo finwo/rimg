@@ -15,8 +15,10 @@ export function insidePolygon(polygon, x, y) {
       if ((pointA[1] < y) && (pointB[1] < y)) continue; // Both points are below test
       if ((pointA[1] > y) && (pointB[1] > y)) continue; // Both points are above test
 
-      // Horizontal line = NOT crossing
+      // Horizontal line = simple comparison
       if (pointA[1] == pointB[1]) {
+        if (pointA[0] > x && pointB[0] > x) continue;
+        crossings++;
         continue;
       }
 

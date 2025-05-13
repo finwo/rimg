@@ -48,7 +48,7 @@
           myImage.drawPolygon(paths, {
             fill: '#000',
             scale: 16,
-            position: [cvs.width/2,cvs.height/2]
+            position: [cvs.width/2-1,cvs.height/2-1]
           });
           cvs.getContext('2d').putImageData(myImage.toImageData(), 0, 0);
         }
