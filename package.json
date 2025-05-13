@@ -1,17 +1,22 @@
 {
   "name": "@finwo/rimg",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Raw image manipulation library",
   "main": "dist/main.js",
   "browser": "dist/main.bundle.js",
   "scripts": {
     "build": "node build.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx -y serve ."
+    "start": "npx -y serve .",
+    "postpublish": "PACKAGE_VERSION=$(node -p \"require('./package.json').version\") PACKAGE_NAME=$(node -p \"require('./package.json').name\") && npm deprecate \"${PACKAGE_NAME}@<${PACKAGE_VERSION}\" \"Rolling release, please update to ${PACKAGE_VERSION}\""
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Yersa Nordman <finwo@pm.me>",
+  "license": "MIT-0",
+  "funding": "https://github.com/sponsors/finwo",
+  "files": [
+    "dist/"
+  ],
   "devDependencies": {
     "@types/node": "^22.15.17",
     "esbuild": "^0.25.4",
