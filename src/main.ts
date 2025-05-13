@@ -9,6 +9,9 @@ import { hexToRgba, insidePolygon } from "./util";
 
   type DrawOptions = {
     fill?: string;
+    position?: [number,number];
+    rotation?: number;
+    scale?: number;
   }
 
   class RIMG {
@@ -51,23 +54,42 @@ import { hexToRgba, insidePolygon } from "./util";
     }
 
     drawPolygon(polygon: [number,number][][], options: DrawOptions) {
-      const fill = hexToRgba(options && options.fill && options.fill || '#000');
+      const fill     = hexToRgba(options && options.fill && options.fill || '#000');
+      const position = options.position || [0,0];
+      const rotation = options.rotation || 0;
+      const scale    = options.scale    || 1;
 
       let minx = Infinity;
       let miny = Infinity;
       let maxx = -Infinity;
       let maxy = -Infinity;
-      for(const path of polygon) {
-        minx = Math.min(minx,...(path.map(v => v[0])));
-        maxx = Math.max(maxx,...(path.map(v => v[0])));
-        miny = Math.min(miny,...(path.map(v => v[1])));
-        maxy = Math.max(maxy,...(path.map(v => v[1])));
-      }
 
+      // Transform polygon & track bounding box
+      const rs = Math.sin(rotation);
+      const rc = Math.cos(rotation);
+      for(const path of polygon) {
+        for(const point of path) {
+          let x = ((rc*point[0]) - (rs*point[1])) * scale + position[0];
+          let y = ((rs*point[0]) + (rc*point[1])) * scale + position[1];
+          minx = Math.min(minx,x);
+          maxx = Math.max(maxx,x);
+          miny = Math.min(miny,y);
+          maxy = Math.max(maxy,y);
+          point[0] = x;
+          point[1] = y;
+        }
+      }
+      minx = Math.max(0,Math.floor(minx));
+      miny = Math.max(0,Math.floor(miny));
+      maxx = Math.min(maxx,this.width-1);
+      maxy = Math.min(maxy,this.height-1);
+
+      // Paint pixels
       for(let y = miny ; y <= maxy ; y++) {
+        const _y = y*this.width;
         for(let x = minx ; x <= maxx ; x++) {
           if (!insidePolygon(polygon, x, y)) continue;
-          const idx = ((y*this.width)+x)*4;
+          const idx = (_y+x)*4;
           this.imageData[idx+0] = fill[0];
           this.imageData[idx+1] = fill[1];
           this.imageData[idx+2] = fill[2];
