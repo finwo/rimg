@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <script src="/dist/main.bundle.js"></script>
+    <style>
+      html {
+        background: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cvs" width="512" height="384"></canvas>
+    <textarea id="ta" style="height:384px;width:512px;padding:0;"></textarea>
+    <script>
+      (async () => {
+        const myImage = new RIMG(cvs);
+
+        function paintBackground() {
+          for(let y=0;y<cvs.height;y++) {
+            for(let x=0;x<cvs.width;x++) {
+              let color = [[255,255,255],[170,170,170]];
+              if (x%32 >= 16) color.push(color.shift());
+              if (y%32 >= 16) color.push(color.shift());
+              const i = ((y*cvs.width)+x)*4;
+              myImage.imageData[i+0] = color[0][0];
+              myImage.imageData[i+1] = color[0][1];
+              myImage.imageData[i+2] = color[0][2];
+              myImage.imageData[i+3] = 255;
+            }
+          }
+        }
+
+        function redraw() {
+          paintBackground();
+          const paths = ta.value
+            .split('\n\n')
+            .filter(p=>p)
+            .map(path => path
+                .split('\n')
+                .filter(p=>p)
+                .map(point => point
+                  .split(' ')
+                  .filter(p=>p)
+                  .map(n => parseFloat(n))
+                )
+            );
+          myImage.drawPolygon(paths, {
+            fill: '#000',
+            scale: 16,
+            position: [cvs.width/2,cvs.height/2]
+          });
+          cvs.getContext('2d').putImageData(myImage.toImageData(), 0, 0);
+        }
+
+        function debounce(fn, t = 500) {
+          let timer = null;
+          return () => {
+            if (timer) clearTimeout(timer);
+            if (timer) console.log('cleared');
+            timer = setTimeout(() => {
+              timer = null;
+              fn();
+            },t);
+          }
+        }
+
+        if (!ta.value) ta.value = `-4 -4\n-4  4\n 4  4\n 4 -4\n\n-3 -3\n-3  3\n 3  3\n 3 -3`;
+        redraw();
+
+        const rebuild = debounce(redraw);
+        ta.onkeyup = rebuild;
+        ta.onchange = rebuild;
+        ta.oninput = rebuild;
+      })();
+    </script>
+  </body>
+</html>
