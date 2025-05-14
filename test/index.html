@@ -36,25 +36,24 @@
               [  0,-40],
               [ 50, 15],
               [-50, 40],
-            ]
+            ],
           ], {
             fill: '#00FF00',
             rotation,
-            // scale: 2 + Math.cos(Date.now()/1000),
-            scale: 2,
+            scale: 2 + Math.cos(Date.now()/1000),
             position: [x,y],
           });
 
-          // x += dx;
-          // y += dy;
-          // if (x ==            0) dx =  1;
-          // if (y ==            0) dy =  1;
-          // if (x == cvs.width -1) dx = -1;
-          // if (y == cvs.height-1) dy = -1;
+          x += dx;
+          y += dy;
+          if (x ==            0) dx =  1;
+          if (y ==            0) dy =  1;
+          if (x == cvs.width -1) dx = -1;
+          if (y == cvs.height-1) dy = -1;
 
           cvs.getContext('2d').putImageData(myImage.toImageData(), 0, 0);
 
-          // rotation += Math.PI / 60;
+          rotation += Math.PI / 60;
         }, 30);
       })();
     </script>
