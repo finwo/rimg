@@ -5,7 +5,7 @@ export function insidePolygon(polygon, x, y) {
     const path = polygon[p];
     // Iterate over lines in the path
     // const path = polygon[p];
-    for(let i=0; i < path.length; i++) {
+    linecheck: for(let i=0; i < path.length; i++) {
 
       // Fetch path's points, relative to our position
       const pointA = path[i],
@@ -15,32 +15,28 @@ export function insidePolygon(polygon, x, y) {
       if ((pointA[1] < y) && (pointB[1] < y)) continue; // Both points are below test
       if ((pointA[1] > y) && (pointB[1] > y)) continue; // Both points are above test
 
-      // Horizontal line = simple comparison
-      if (pointA[1] == pointB[1]) {
-        if (pointA[0] > x && pointB[0] > x) continue;
-        crossings++;
-        continue;
-      }
-
-      // Crosses point A, discard
-      // It'll be checked when crossing B
+      // Skip check on crossing point A
+      // It'll be counted as pointB on the next line
       if (pointA[1] === y) continue;
 
-      // Crosses point B, discard if surrounding points suggest not inside
+      // Handle crossing point B
       if (pointB[1] === y) {
-        const pointC = path[(i+2) % path.length];
-        if (pointA[1] < pointB[1] && pointC[1] < pointB[1]) continue;
-        if (pointA[1] > pointB[1] && pointC[1] > pointB[1]) continue;
+        if (pointB[0] < x) continue;
+        for(let offset = 0; offset < path.length; offset++) {
+          let pointC = path[(i+1+offset)%path.length];
+          if (pointC[1] === y) continue;
+          if (pointA[1] < y && pointC[1] < y) continue linecheck;
+          if (pointA[1] > y && pointC[1] > y) continue linecheck;
+          crossings++;
+          continue linecheck;
+        }
+        // Ran through all points, polygon is flat
+        continue;
       }
 
       // Crosses somewhere, don't care where
+      // Also handles vertical lines
       if ((pointA[0] >= x) && (pointB[0] >= x)) {
-        crossings++;
-        continue;
-      }
-
-      // Vertical line, save some computation
-      if (pointA[0] == pointB[0]) {
         crossings++;
         continue;
       }
@@ -66,7 +62,7 @@ export function insidePolygon(polygon, x, y) {
   }
 
   // true  = inside
-  // false = inside
+  // false = outside
   return !!(crossings % 2);
 }
 
