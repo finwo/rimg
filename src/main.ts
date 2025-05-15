@@ -67,7 +67,9 @@ import { hexToRgba, insidePolygon } from "./util";
       // Transform polygon & track bounding box
       const rs = Math.sin(rotation);
       const rc = Math.cos(rotation);
+      const translated = [];
       for(const path of polygon) {
+        const newPath = [];
         for(const point of path) {
           let x = ((rc*point[0]) - (rs*point[1])) * scale + position[0];
           let y = ((rs*point[0]) + (rc*point[1])) * scale + position[1];
@@ -75,9 +77,9 @@ import { hexToRgba, insidePolygon } from "./util";
           maxx = Math.max(maxx,x);
           miny = Math.min(miny,y);
           maxy = Math.max(maxy,y);
-          point[0] = x;
-          point[1] = y;
+          newPath.push([x,y]);
         }
+        translated.push(newPath);
       }
       minx = Math.max(0,Math.floor(minx));
       miny = Math.max(0,Math.floor(miny));
@@ -88,7 +90,7 @@ import { hexToRgba, insidePolygon } from "./util";
       for(let y = miny ; y <= maxy ; y++) {
         const _y = y*this.width;
         for(let x = minx ; x <= maxx ; x++) {
-          if (!insidePolygon(polygon, x, y)) continue;
+          if (!insidePolygon(translated, x, y)) continue;
           const idx = (_y+x)*4;
           this.imageData[idx+0] = fill[0];
           this.imageData[idx+1] = fill[1];
